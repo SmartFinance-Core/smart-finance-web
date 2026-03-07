@@ -1,0 +1,99 @@
+<div class="min-h-screen bg-slate-50 flex">
+  <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-10 hidden md:flex">
+    <div class="p-6 flex items-center gap-3 border-b border-slate-800">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+        SF
+      </div>
+      <h2 class="text-2xl font-bold text-white tracking-tight">Smart Finance</h2>
+    </div>
+
+    <nav class="flex-1 px-4 py-6 space-y-2">
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600/10 text-blue-400 font-medium transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+        Dashboard Principal
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        Mis Gastos
+      </a>
+    </nav>
+  </aside>
+
+  <main class="flex-1 flex flex-col h-screen overflow-hidden">
+    <header class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center sticky top-0 z-0">
+      <h1 class="text-2xl font-bold text-slate-800">Resumen Financiero</h1>
+      <button (click)="logout()" class="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors flex items-center gap-2">
+        Cerrar Sesión
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-8">
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
+          <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Gastado</p>
+          <p class="text-4xl font-black text-slate-800">S/ {{ totalGastado | number:'1.2-2' }}</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-6 rounded-2xl shadow-lg border border-blue-500 flex flex-col justify-center transform hover:-translate-y-1 transition-transform">
+          <p class="text-sm font-semibold text-blue-100 uppercase tracking-wider mb-1">Presupuesto</p>
+          <p class="text-4xl font-black text-white">S/ {{ presupuestoMensual | number:'1.2-2' }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
+          <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Disponible</p>
+          <p class="text-4xl font-black text-emerald-500">S/ {{ (presupuestoMensual - totalGastado) | number:'1.2-2' }}</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <h3 class="text-lg font-bold text-slate-800">Movimientos Recientes</h3>
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition-colors">
+            + Nuevo Gasto
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+            <tr class="bg-white text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100">
+              <th class="px-6 py-4 font-semibold">Descripción</th>
+              <th class="px-6 py-4 font-semibold">Categoría</th>
+              <th class="px-6 py-4 font-semibold">Fecha</th>
+              <th class="px-6 py-4 font-semibold text-right">Monto</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+
+              @for (expense of expenses; track expense.id) {
+                <tr class="hover:bg-slate-50 transition-colors group">
+                  <td class="px-6 py-4 text-sm font-medium text-slate-800">{{ expense.description }}</td>
+                  <td class="px-6 py-4">
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold border border-slate-200 group-hover:bg-white transition-colors">
+                      {{ expense.category.name }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-500">{{ expense.date | date:'dd/MM/yyyy' }}</td>
+                  <td class="px-6 py-4 text-sm font-bold text-slate-800 text-right">-S/ {{ expense.amount | number:'1.2-2' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="px-6 py-12 text-center">
+                    <div class="flex flex-col items-center justify-center text-slate-400">
+                      <svg class="w-16 h-16 mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                      <p class="text-lg font-medium">Aún no tienes gastos registrados.</p>
+                      <p class="text-sm">Tus finanzas están intactas por ahora.</p>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
