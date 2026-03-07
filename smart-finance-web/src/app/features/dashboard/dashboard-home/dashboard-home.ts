@@ -1,45 +1,90 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Expense, ExpenseModel } from '../../../core/services/expense';
+import { Category, CategoryModel } from '../../../core/services/category';
 import { AuthService } from '../../../core/services/auth';
-import { Expense } from '../../../core/services/expense';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './dashboard-home.html'
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './dashboard-home.html' // Asumo que tu HTML tampoco lleva .component
 })
 export class DashboardHome implements OnInit {
-  private expense = inject(Expense);
-  private authService = inject(AuthService);
+  private expenseAPI = inject(Expense);
+  private categoryAPI = inject(Category);
+  private authService = inject(AuthService); // El único que mantiene la convención
   private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  // Aquí guardaremos los datos reales que vienen de MySQL
-  expenses: Expense[] = [];
+  expenses: ExpenseModel[] = [];
+  categories: CategoryModel[] = [];
   totalGastado: number = 0;
-  presupuestoMensual: number = 3000; // Esto podríamos traerlo de la BD luego
+  presupuestoMensual: number = 3000;
+
+  isModalOpen = false;
+  currentUserId = 1;
+
+  expenseForm = this.fb.group({
+    amount: ['', [Validators.required, Validators.min(0.1)]],
+    description: ['', Validators.required],
+    categoryId: ['', Validators.required]
+  });
 
   ngOnInit() {
+    this.loadCategories();
     this.loadExpenses();
   }
 
+  loadCategories() {
+    this.categoryAPI.getCategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+        console.log('Categorías cargadas:', data); // Veremos si llega un array vacío []
+      },
+      error: (err) => console.error('Error al cargar categorías (Revisa Spring Security):', err)
+    });
+  }
+
   loadExpenses() {
-    this.expense.getExpenses().subscribe({
+    this.expenseAPI.getExpensesByUserId(this.currentUserId).subscribe({
       next: (data) => {
         this.expenses = data;
         this.calculateTotal();
       },
-      error: (err) => {
-        console.error('Error al cargar gastos desde Java:', err);
-      }
+      error: (err) => console.error('Error al cargar gastos:', err)
     });
   }
 
   calculateTotal() {
-    // Sumamos todos los montos del array automáticamente
     this.totalGastado = this.expenses.reduce((sum, item) => sum + item.amount, 0);
+  }
+
+  openModal() { this.isModalOpen = true; }
+  closeModal() {
+    this.isModalOpen = false;
+    this.expenseForm.reset();
+  }
+
+  saveExpense() {
+    if (this.expenseForm.valid) {
+      const newExpense = {
+        amount: Number(this.expenseForm.value.amount),
+        description: this.expenseForm.value.description!,
+        categoryId: Number(this.expenseForm.value.categoryId),
+        userId: this.currentUserId
+      };
+
+      this.expenseAPI.createExpense(newExpense).subscribe({
+        next: () => {
+          this.loadExpenses();
+          this.closeModal();
+        },
+        error: (err) => console.error('Error al guardar', err)
+      });
+    }
   }
 
   logout() {

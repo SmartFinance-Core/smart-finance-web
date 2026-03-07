@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 
-// Definimos la "forma" de los datos que vienen de Spring Boot
-export interface Expense {
+export interface ExpenseModel {
   id: number;
   description: string;
   amount: number;
@@ -18,14 +17,15 @@ export interface Expense {
 @Injectable({
   providedIn: 'root'
 })
-export class Expense {
+export class Expense { // Nombre limpio, sin "Service"
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/expenses`; // Asegúrate de que este sea tu endpoint en Java
+  private apiUrl = `${environment.apiUrl}/expenses`;
 
-  // Trae todos los gastos del usuario
-  getExpenses(): Observable<Expense[]> {
-    // Si tu controlador en Java requiere el ID del usuario en la URL,
-    // cámbialo a `${this.apiUrl}/user/1` temporalmente hasta que leamos el ID del Token
-    return this.http.get<Expense[]>(this.apiUrl);
+  getExpensesByUserId(userId: number): Observable<ExpenseModel[]> {
+    return this.http.get<ExpenseModel[]>(`${this.apiUrl}/user/${userId}`);
+  }
+
+  createExpense(expenseData: { amount: number; description: string; categoryId: number; userId: number }): Observable<any> {
+    return this.http.post(this.apiUrl, expenseData);
   }
 }
