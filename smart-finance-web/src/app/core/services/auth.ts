@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable, tap } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,20 @@ export class AuthService {
         }
       })
     );
+  }
+  getUserIdFromToken(): number | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+      // Desempaquetamos el token
+      const decodedToken: any = jwtDecode(token);
+      // Retornamos la llave exacta que pusimos en Java ("userId")
+      return decodedToken.userId;
+    } catch (error) {
+      console.error('Error al decodificar el token:', error);
+      return null;
+    }
   }
 
   logout(): void {

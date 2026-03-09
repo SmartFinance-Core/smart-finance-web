@@ -24,7 +24,9 @@ export class Expense { // Nombre limpio, sin "Service"
   getExpensesByUserId(userId: number): Observable<ExpenseModel[]> {
     return this.http.get<ExpenseModel[]>(`${this.apiUrl}/user/${userId}`);
   }
-
+  createExpenseFromText(text: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/ai-text`, { text });
+  }
   createExpense(expenseData: { amount: number; description: string; categoryId: number; userId: number }): Observable<any> {
     return this.http.post(this.apiUrl, expenseData);
   }
