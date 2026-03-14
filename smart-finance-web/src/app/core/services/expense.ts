@@ -30,4 +30,11 @@ export class Expense { // Nombre limpio, sin "Service"
   createExpense(expenseData: { amount: number; description: string; categoryId: number; userId: number }): Observable<any> {
     return this.http.post(this.apiUrl, expenseData);
   }
+  // NUEVO: Envía la imagen de la boleta (Multipart) a Java
+  uploadReceipt(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file); // 'file' es exactamente el nombre que Java está esperando
+
+    return this.http.post(`${this.apiUrl}/ai-receipt`, formData);
+  }
 }
