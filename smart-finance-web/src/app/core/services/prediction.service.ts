@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface PredictionResponse {
   daily_average: number;
@@ -13,9 +14,8 @@ export interface PredictionResponse {
   providedIn: 'root'
 })
 export class PredictionService {
-  private apiUrl = 'http://localhost:8080/api/predictions/burn-rate';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/predictions/burn-rate`;
 
   getBurnRatePrediction(): Observable<PredictionResponse> {
     return this.http.get<PredictionResponse>(this.apiUrl);
