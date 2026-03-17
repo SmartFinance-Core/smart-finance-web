@@ -29,6 +29,9 @@ export class DashboardHome implements OnInit {
   isProcessingAI = false;
   isUploadingReceipt = false;
   isModalOpen = false;
+  isLoadingExpenses = false;
+  isLoadingIncomes = false;
+  isLoadingPrediction = false;
 
   // --- Datos ---
   expenses: ExpenseModel[] = [];
@@ -69,30 +72,45 @@ export class DashboardHome implements OnInit {
   }
 
   loadExpenses() {
+    this.isLoadingExpenses = true;
     this.expenseAPI.getExpensesByUserId(this.currentUserId).subscribe({
       next: (data) => {
         this.expenses = data;
         this.calculateTotal();
+        this.isLoadingExpenses = false;
       },
-      error: (err) => console.error('Error al cargar gastos:', err)
+      error: (err) => {
+        console.error('Error al cargar gastos:', err);
+        this.isLoadingExpenses = false;
+      }
     });
   }
 
   loadIncomes() {
+    this.isLoadingIncomes = true;
     this.incomeService.getMyIncomes().subscribe({
       next: (data) => {
         this.totalIngresos = data.reduce((sum, item) => sum + item.amount, 0);
+        this.isLoadingIncomes = false;
       },
-      error: (err) => console.error('Error al cargar ingresos', err)
+      error: (err) => {
+        console.error('Error al cargar ingresos', err);
+        this.isLoadingIncomes = false;
+      }
     });
   }
 
   loadPrediction() {
+    this.isLoadingPrediction = true;
     this.predictionAPI.getBurnRatePrediction().subscribe({
       next: (data) => {
         this.predictionMessage = data.message;
+        this.isLoadingPrediction = false;
       },
-      error: (err) => console.error('Error al obtener predicción de IA', err)
+      error: (err) => {
+        console.error('Error al obtener predicción de IA', err);
+        this.isLoadingPrediction = false;
+      }
     });
   }
 

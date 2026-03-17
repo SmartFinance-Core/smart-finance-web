@@ -22,7 +22,22 @@
         <p *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')"
            class="text-red-500 text-xs mt-1">Ingresa un correo válido.</p>
       </div>
-
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Número de WhatsApp</label>
+        <div class="mt-1 flex rounded-lg shadow-sm border border-gray-300 focus-within:ring-blue-500 focus-within:border-blue-500">
+    <span class="inline-flex items-center px-3 rounded-l-lg border-r border-gray-300 bg-gray-50 text-gray-500 text-sm">
+      +51
+    </span>
+          <input type="tel" formControlName="phoneNumber"
+                 class="flex-1 block w-full px-4 py-2 rounded-r-lg outline-none"
+                 placeholder="987654321">
+        </div>
+        <p class="text-xs text-gray-400 mt-1">Ingresa tu número sin el prefijo +51</p>
+        <p *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('pattern')"
+           class="text-red-500 text-xs mt-1">Ingresa un número celular peruano válido (9 dígitos).</p>
+        <p *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.hasError('required')"
+           class="text-red-500 text-xs mt-1">El número de WhatsApp es obligatorio.</p>
+      </div>
       <div>
         <label class="block text-sm font-medium text-gray-700">Contraseña</label>
         <input type="password" formControlName="password"

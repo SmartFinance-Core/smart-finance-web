@@ -21,6 +21,10 @@ export class Register {
 
   registerForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
+    phoneNumber: ['', [
+      Validators.required,
+      Validators.pattern('^[9][0-9]{8}$')
+    ]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required]
   }, { validators: this.passwordsMatch });
@@ -39,6 +43,7 @@ export class Register {
 
     const credentials = {
       email: this.registerForm.value.email!,
+      phoneNumber: '51' + this.registerForm.value.phoneNumber!,
       password: this.registerForm.value.password!
     };
 
@@ -50,7 +55,7 @@ export class Register {
       error: (err) => {
         this.isLoading = false;
         if (err.status === 409) {
-          this.errorMessage = 'Este correo ya está registrado.';
+          this.errorMessage = 'Este correo o número de WhatsApp ya está registrado.';
         } else {
           this.errorMessage = 'Error al crear la cuenta. Intenta de nuevo.';
         }
